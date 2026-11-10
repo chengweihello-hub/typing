@@ -1,0 +1,12 @@
+# Local textbook reference photos; not needed by the website.
+/1.jpg
+/2.jpg
+/3.jpg
+/4.jpg
+/5.jpg
+/6.jpg
+
+# OS / editor files
+.DS_Store
+Thumbs.db
+desktop.ini

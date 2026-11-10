@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#eaf8ee">
+  <meta name="description" content="词语小森林：给小学生的自适应打字游戏。语文拼音、英语单词分开练习，有拼音提示、打字音效和成长挑战。">
+  <title>词语小森林 · 小学生打字冒险</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="on-home">
+  <svg class="svg-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="i-star" viewBox="0 0 24 24">
+      <path d="M12 2.7l2.9 5.9 6.5.9-4.7 4.6 1.1 6.4-5.8-3-5.8 3 1.1-6.4L2.6 9.5l6.5-.9L12 2.7z"/>
+    </symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24">
+      <path d="M4.5 12h14M13 6.5l5.5 5.5-5.5 5.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-back" viewBox="0 0 24 24">
+      <path d="M19.5 12h-15M11 5.5L4.5 12 11 18.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-sound-on" viewBox="0 0 24 24">
+      <path d="M11 4.8 6.2 9H3.3v6h2.9l4.8 4.2V4.8z" fill="currentColor"/>
+      <path d="M15.2 8.4a5 5 0 0 1 0 7.2M18.1 5.5a9 9 0 0 1 0 13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-sound-off" viewBox="0 0 24 24">
+      <path d="M11 4.8 6.2 9H3.3v6h2.9l4.8 4.2V4.8z" fill="currentColor"/>
+      <path d="m15.5 9.5 5 5m0-5-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-reset" viewBox="0 0 24 24">
+      <path d="M4.5 4.5v6h6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M5.2 10.2a7.2 7.2 0 1 1 .5 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-bulb" viewBox="0 0 24 24">
+      <path d="M9.2 18h5.6M10.3 21h3.4M12 3a6 6 0 0 0-3.8 10.6c.6.6.9 1.3.9 2.1h5.8c0-.8.3-1.5.9-2.1A6 6 0 0 0 12 3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-close" viewBox="0 0 24 24">
+      <path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-home" viewBox="0 0 24 24">
+      <path d="m3 11 9-8 9 8M5 10v10h5v-6h4v6h5V10" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+  </svg>
+
+  <div class="world-bg" aria-hidden="true">
+    <div class="sun"></div>
+    <div class="cloud cloud-a"><i></i><i></i><i></i></div>
+    <div class="cloud cloud-b"><i></i><i></i><i></i></div>
+    <div class="cloud cloud-c"><i></i><i></i><i></i></div>
+    <div class="hill hill-back"></div>
+    <div class="hill hill-front"></div>
+    <div class="bg-spark spark-a">✦</div>
+    <div class="bg-spark spark-b">✧</div>
+    <div class="bg-spark spark-c">✦</div>
+    <div class="bg-leaf leaf-a">🍃</div>
+    <div class="bg-leaf leaf-b">🍂</div>
+  </div>
+
+  <div class="app">
+    <header class="topbar">
+      <button class="brand" id="brandBtn" type="button" aria-label="回到首页">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 46 46">
+            <path d="M23 39V21" fill="none" stroke="#245a3a" stroke-width="3.4" stroke-linecap="round"/>
+            <path d="M23 25C13 25 8 18 8 9c10 0 15 6 15 16z" fill="#67bd74"/>
+            <path d="M23 20c9 0 14-6 14-14-9 0-14 5-14 14z" fill="#97d989"/>
+            <path d="M23 31c-6 0-10-4-10-10 6 0 10 4 10 10z" fill="#4ca25f"/>
+          </svg>
+        </span>
+        <span class="brand-text">
+          <strong>词语小森林</strong>
+          <small>WORD GROVE</small>
+        </span>
+      </button>
+
+      <div class="top-actions">
+        <span class="star-bank" title="已经收集的星星">
+          <svg class="icon icon-star" aria-hidden="true"><use href="#i-star"></use></svg>
+          <b id="totalStars">0</b>
+        </span>
+        <button class="icon-btn" id="soundBtn" type="button" aria-label="关闭音效" aria-pressed="true" title="音效开关">
+          <svg class="icon sound-on-icon" aria-hidden="true"><use href="#i-sound-on"></use></svg>
+          <svg class="icon sound-off-icon" aria-hidden="true"><use href="#i-sound-off"></use></svg>
+        </button>
+        <button class="icon-btn reset-top" id="resetBtn" type="button" aria-label="清除学习进度" title="清除学习进度">
+          <svg class="icon" aria-hidden="true"><use href="#i-reset"></use></svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="main">
+      <section class="screen home-screen is-active" id="homeScreen" aria-hidden="false">
+        <div class="home">
+          <div class="hero">
+            <div class="hero-copy">
+              <span class="eyebrow"><span class="eyebrow-dot"></span> 给小学生的打字冒险</span>
+              <h1>把词语，<br><span class="marker">敲成星星</span><span class="h1-spark">✦</span></h1>
+              <p class="hero-lead">跟着小狐狸小栗，一起在森林里敲敲打打。语文、英语分开练习，难度会随着你的进步慢慢长大。</p>
+              <div class="hero-badges" aria-label="特色">
+                <span>🌱 自适应难度</span>
+                <span>🎵 打字音效</span>
+                <span>💾 自动保存</span>
+              </div>
+            </div>
+
+            <div class="hero-art" aria-hidden="true">
+              <div class="art-halo"></div>
+              <div class="speech-bubble hero-speech">嗨，我是小栗！<br>今天想种哪棵树？</div>
+              <div class="float-card float-zh">
+                <span class="float-py">shān pō</span>
+                <b>山坡</b>
+              </div>
+              <div class="float-card float-en">
+                <b>abc</b>
+                <span class="float-py">happy!</span>
+              </div>
+              <svg class="fox fox-home" viewBox="0 0 240 240" role="img" aria-label="小狐狸小栗">
+                <ellipse cx="120" cy="220" rx="55" ry="9" fill="rgba(44,82,54,.14)"/>
+                <path class="fox-tail" d="M163 183c43 0 61-37 48-69-8 29-31 47-59 51l11 18z" fill="#ee8b5f" stroke="#8c4f39" stroke-width="2.5" stroke-linejoin="round"/>
+                <path d="M209 117c7 15 0 31-11 38 10-13 14-25 11-38z" fill="#fff1e2"/>
+                <path class="fox-body" d="M70 212c-6-47 12-67 50-67s56 20 50 67z" fill="#f39a6d" stroke="#8c4f39" stroke-width="2.5" stroke-linejoin="round"/>
+                <ellipse cx="120" cy="193" rx="31" ry="21" fill="#ffe9d6"/>
+                <path d="M82 153q38 17 76 0l2 15q-40 18-80 0z" fill="#4aa66a" stroke="#286b42" stroke-width="2.2" stroke-linejoin="round"/>
+                <path d="M146 166l17 34-14-5-10-23z" fill="#3d955d" stroke="#286b42" stroke-width="2.2" stroke-linejoin="round"/>
+                <path d="M68 95 61 50l35 22z" fill="#f39a6d" stroke="#8c4f39" stroke-width="2.5" stroke-linejoin="round"/>
+                <path d="m72 81-3-22 19 13z" fill="#ffd9c7"/>
+                <path d="m172 95 7-45-35 22z" fill="#f39a6d" stroke="#8c4f39" stroke-width="2.5" stroke-linejoin="round"/>
+                <path d="m168 81 3-22-19 13z" fill="#ffd9c7"/>
+                <path d="M62 105c0-39 24-60 58-60s58 21 58 60c0 37-23 57-58 57s-58-20-58-57z" fill="#f6a273" stroke="#8c4f39" stroke-width="2.5" stroke-linejoin="round"/>
+                <path d="M86 111c0-20 14-27 34-27s34 7 34 27c0 26-15 40-34 40s-34-14-34-40z" fill="#fff1e5"/>
+                <path d="M111 47q9-13 18 0-9-5-18 0z" fill="#f6a273" stroke="#8c4f39" stroke-width="2.2" stroke-linejoin="round"/>
+                <g class="fox-eyes">
+                  <ellipse class="fox-eye" cx="101" cy="112" rx="5" ry="7" fill="#3a2a24"/>
+                  <ellipse class="fox-eye" cx="139" cy="112" rx="5" ry="7" fill="#3a2a24"/>
+                  <circle cx="103" cy="109" r="1.7" fill="#fff"/>
+                  <circle cx="141" cy="109" r="1.7" fill="#fff"/>
+                </g>
+                <ellipse cx="91" cy="134" rx="9" ry="5.5" fill="#ffb2a0" opacity=".72"/>
+                <ellipse cx="149" cy="134" rx="9" ry="5.5" fill="#ffb2a0" opacity=".72"/>
+                <path d="M114 124q6-5 12 0-4 7-6 7t-6-7z" fill="#4a322c"/>
+                <path class="mouth-smile" d="M120 132q-6 7-12 2m12-2q6 7 12 2" fill="none" stroke="#4a322c" stroke-width="2.4" stroke-linecap="round"/>
+                <ellipse class="mouth-open" cx="120" cy="140" rx="9" ry="7" fill="#5b3730"/>
+                <path class="mouth-sad" d="M109 141q11-7 22 0" fill="none" stroke="#4a322c" stroke-width="2.4" stroke-linecap="round"/>
+              </svg>
+              <span class="art-spark art-spark-1">✦</span>
+              <span class="art-spark art-spark-2">✧</span>
+              <span class="art-spark art-spark-3">✦</span>
+            </div>
+          </div>
+
+          <div class="mode-grid" aria-label="选择练习模式">
+            <article class="mode-card mode-zh" id="zhCard">
+              <div class="mode-card-top">
+                <span class="chip chip-zh">拼音打字</span>
+                <span class="level-chip" id="zhLevel">🌱 小种子</span>
+              </div>
+              <div class="mode-preview preview-zh" aria-hidden="true">
+                <div class="preview-sun"></div>
+                <div class="preview-pinyin"><span>shān</span><span>pō</span></div>
+                <div class="preview-hanzi">山坡</div>
+                <div class="preview-leaf">🍃</div>
+              </div>
+              <div class="mode-body">
+                <h2>语文小森林</h2>
+                <p>看拼音，敲字母。把课本里的 250 个词语，一个一个收进小篮子。</p>
+                <span class="mode-tip">声调不用打 · ü 用 V 键</span>
+              </div>
+              <div class="mode-stats">
+                <span><b id="zhSeen">0</b> / 250 个词语</span>
+                <span><svg class="icon icon-inline" aria-hidden="true"><use href="#i-star"></use></svg> <b id="zhStars">0</b></span>
+              </div>
+              <div class="mode-progress" aria-hidden="true"><i id="zhProgress"></i></div>
+              <div class="mode-action">
+                <button class="btn btn-green" type="button" id="zhStart" data-start="zh">
+                  开始种树
+                  <svg class="icon btn-icon" aria-hidden="true"><use href="#i-arrow"></use></svg>
+                </button>
+                <span class="mode-note">一局 10 个词</span>
+              </div>
+            </article>
+
+            <article class="mode-card mode-en" id="enCard">
+              <div class="mode-card-top">
+                <span class="chip chip-en">English</span>
+                <span class="level-chip" id="enLevel">🌱 小种子</span>
+              </div>
+              <div class="mode-preview preview-en" aria-hidden="true">
+                <div class="abc-block abc-a">a</div>
+                <div class="abc-block abc-b">b</div>
+                <div class="abc-block abc-c">c</div>
+                <span class="preview-word">happy!</span>
+                <span class="preview-star">★</span>
+              </div>
+              <div class="mode-body">
+                <h2>English Adventure</h2>
+                <p>敲出英语单词和小句子。大小写不设限，重点是——大胆敲下去！</p>
+                <span class="mode-tip">大小写不设限 · 空格标点要敲</span>
+              </div>
+              <div class="mode-stats">
+                <span><b id="enSeen">0</b> / 165 个词语</span>
+                <span><svg class="icon icon-inline" aria-hidden="true"><use href="#i-star"></use></svg> <b id="enStars">0</b></span>
+              </div>
+              <div class="mode-progress" aria-hidden="true"><i id="enProgress"></i></div>
+              <div class="mode-action">
+                <button class="btn btn-blue" type="button" id="enStart" data-start="en">
+                  开始探险
+                  <svg class="icon btn-icon" aria-hidden="true"><use href="#i-arrow"></use></svg>
+                </button>
+                <span class="mode-note">一局 10 个词</span>
+              </div>
+            </article>
+          </div>
+
+          <div class="home-stats">
+            <div class="home-stat">
+              <span class="home-stat-icon">⭐</span>
+              <div><strong id="homeStars">0</strong><span>收集的星星</span></div>
+            </div>
+            <div class="home-stat">
+              <span class="home-stat-icon">🌳</span>
+              <div><strong id="homeSessions">0</strong><span>完成的练习</span></div>
+            </div>
+            <div class="home-stat">
+              <span class="home-stat-icon">🔥</span>
+              <div><strong id="homeCombo">0</strong><span>最高连击</span></div>
+            </div>
+            <p class="home-note">不用登录，进度会自动保存在这台设备上。<br>慢慢来，每个字都会发光。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen game-screen" id="gameScreen" aria-hidden="true">
+        <div class="game-shell">
+          <div class="game-top">
+            <button class="round-back" id="backBtn" type="button" aria-label="返回首页" title="返回首页">
+              <svg class="icon" aria-hidden="true"><use href="#i-back"></use></svg>
+            </button>
+            <div class="round-meta">
+              <div class="round-title-row">
+                <span class="round-title" id="gameModeName">语文小森林</span>
+                <span class="level-chip" id="gameLevel">🌱 小种子</span>
+              </div>
+              <div class="round-progress-row">
+                <div class="round-track" aria-hidden="true"><i id="roundBar"></i><span class="round-leaf">🍃</span></div>
+                <span class="round-count" id="roundCount">1 / 10</span>
+              </div>
+            </div>
+            <div class="round-stars" title="本轮获得的星星">
+              <svg class="icon" aria-hidden="true"><use href="#i-star"></use></svg>
+              <b id="gameStars">0</b>
+            </div>
+          </div>
+
+          <div class="game-layout">
+            <aside class="coach" aria-label="小栗的提示">
+              <div class="coach-bubble" id="coachBubble">看拼音，敲出词语。<br>小键盘会亮起下一个键！</div>
+              <svg class="fox fox-coach" id="coachFox" viewBox="0 0 240 240" role="img" aria-label="小狐狸小栗">
+                <ellipse cx="120" cy="220" rx="55" ry="9" fill="rgba(44,82,54,.14)"/>
+                <path class="fox-tail" d="M163 183c43 0 61-37 48-69-8 29-31 47-59 51l11 18z" fill="#ee8b5f" stroke="#8c4f39" stroke-width="2.5" stroke-linejoin="round"/>
+                <path d="M209 117c7 15 0 31-11 38 10-13 14-25 11-38z" fill="#fff1e2"/>
+                <path class="fox-body" d="M70 212c-6-47 12-67 50-67s56 20 50 67z" fill="#f39a6d" stroke="#8c4f39" stroke-width="2.5" stroke-linejoin="round"/>
+                <ellipse cx="120" cy="193" rx="31" ry="21" fill="#ffe9d6"/>
+                <path d="M82 153q38 17 76 0l2 15q-40 18-80 0z" fill="#4aa66a" stroke="#286b42" stroke-width="2.2" stroke-linejoin="round"/>
+                <path d="M146 166l17 34-14-5-10-23z" fill="#3d955d" stroke="#286b42" stroke-width="2.2" stroke-linejoin="round"/>
+                <path d="M68 95 61 50l35 22z" fill="#f39a6d" stroke="#8c4f39" stroke-width="2.5" stroke-linejoin="round"/>
+                <path d="m72 81-3-22 19 13z" fill="#ffd9c7"/>
+                <path d="m172 95 7-45-35 22z" fill="#f39a6d" stroke="#8c4f39" stroke-width="2.5" stroke-linejoin="round"/>
+                <path d="m168 81 3-22-19 13z" fill="#ffd9c7"/>
+                <path d="M62 105c0-39 24-60 58-60s58 21 58 60c0 37-23 57-58 57s-58-20-58-57z" fill="#f6a273" stroke="#8c4f39" stroke-width="2.5" stroke-linejoin="round"/>
+                <path d="M86 111c0-20 14-27 34-27s34 7 34 27c0 26-15 40-34 40s-34-14-34-40z" fill="#fff1e5"/>
+                <path d="M111 47q9-13 18 0-9-5-18 0z" fill="#f6a273" stroke="#8c4f39" stroke-width="2.2" stroke-linejoin="round"/>
+                <g class="fox-eyes">
+                  <ellipse class="fox-eye" cx="101" cy="112" rx="5" ry="7" fill="#3a2a24"/>
+                  <ellipse class="fox-eye" cx="139" cy="112" rx="5" ry="7" fill="#3a2a24"/>
+                  <circle cx="103" cy="109" r="1.7" fill="#fff"/>
+                  <circle cx="141" cy="109" r="1.7" fill="#fff"/>
+                </g>
+                <ellipse cx="91" cy="134" rx="9" ry="5.5" fill="#ffb2a0" opacity=".72"/>
+                <ellipse cx="149" cy="134" rx="9" ry="5.5" fill="#ffb2a0" opacity=".72"/>
+                <path d="M114 124q6-5 12 0-4 7-6 7t-6-7z" fill="#4a322c"/>
+                <path class="mouth-smile" d="M120 132q-6 7-12 2m12-2q6 7 12 2" fill="none" stroke="#4a322c" stroke-width="2.4" stroke-linecap="round"/>
+                <ellipse class="mouth-open" cx="120" cy="140" rx="9" ry="7" fill="#5b3730"/>
+                <path class="mouth-sad" d="M109 141q11-7 22 0" fill="none" stroke="#4a322c" stroke-width="2.4" stroke-linecap="round"/>
+              </svg>
+              <div class="combo-meter" id="comboWrap">
+                <span>连击</span>
+                <b id="comboCount">0</b>
+              </div>
+            </aside>
+
+            <div class="play-area">
+              <div class="prompt-card" id="promptCard">
+                <div class="prompt-card-glow"></div>
+                <span class="prompt-badge" id="promptBadge">看拼音 · 敲字母</span>
+                <div class="word-stage" id="wordStage" role="group" aria-label="要打的词语"></div>
+                <div class="key-dots" id="keyDots" aria-hidden="true"></div>
+                <div class="typed-line" aria-live="off">
+                  <span class="typed-label">已打出</span>
+                  <span class="typed-value" id="typedPreview">等待第一个键…</span>
+                </div>
+                <div class="feedback" id="feedback" aria-live="polite">准备好手指，出发！</div>
+                <div class="prompt-actions">
+                  <button class="hint-btn" id="hintBtn" type="button">
+                    <svg class="icon" aria-hidden="true"><use href="#i-bulb"></use></svg>
+                    提示
+                  </button>
+                  <span class="physical-hint">直接用键盘打字，也可以点下面的小键盘</span>
+                </div>
+              </div>
+
+              <div class="keyboard" aria-label="屏幕小键盘">
+                <div class="keyboard-head">
+                  <span>小键盘</span>
+                  <span class="next-key-copy" id="nextKeyText">下一个键会发光</span>
+                </div>
+                <div class="keyboard-rows" id="keyboardRows"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen result-screen" id="resultScreen" aria-hidden="true">
+        <div class="result-wrap">
+          <div class="result-card">
+            <div class="result-ribbon" aria-hidden="true">✦ 本 轮 战 报 ✦</div>
+            <div class="result-medal" id="resultMedal" aria-hidden="true">🏅</div>
+            <div class="medal-stars" id="medalStars" aria-label="本轮评价"></div>
+            <h1 id="resultTitle">太棒啦！</h1>
+            <p class="result-subtitle" id="resultSubtitle">小树又长高了一点点</p>
+
+            <div class="result-stats">
+              <div class="result-stat">
+                <span class="result-stat-icon">🎯</span>
+                <strong id="resultAccuracy">0%</strong>
+                <span>正确率</span>
+              </div>
+              <div class="result-stat">
+                <span class="result-stat-icon">⚡</span>
+                <strong id="resultCpm">0</strong>
+                <span>字符 / 分钟</span>
+              </div>
+              <div class="result-stat">
+                <span class="result-stat-icon">🔥</span>
+                <strong id="resultCombo">0</strong>
+                <span>最高连击</span>
+              </div>
+              <div class="result-stat">
+                <span class="result-stat-icon">⭐</span>
+                <strong id="resultStars">0</strong>
+                <span>本轮星星</span>
+              </div>
+            </div>
+
+            <div class="level-banner" id="resultLevelBanner">
+              <span class="level-banner-icon">🌿</span>
+              <span id="levelBannerText">小树又长高了一点！</span>
+            </div>
+
+            <div class="result-lists">
+              <div class="result-list">
+                <h2><span>🌟</span> 打得真棒</h2>
+                <div class="word-chips" id="resultNewWords"></div>
+              </div>
+              <div class="result-list">
+                <h2><span>🌱</span> 下次再练</h2>
+                <div class="word-chips" id="resultReviewWords"></div>
+              </div>
+            </div>
+
+            <div class="result-actions">
+              <button class="btn btn-green btn-lg" id="playAgainBtn" type="button">
+                再来一局
+                <svg class="icon btn-icon" aria-hidden="true"><use href="#i-reset"></use></svg>
+              </button>
+              <button class="btn btn-ghost btn-lg" id="resultHomeBtn" type="button">
+                <svg class="icon btn-icon" aria-hidden="true"><use href="#i-home"></use></svg>
+                回到首页
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="countdown" id="countdown" hidden>
+    <div class="countdown-card">
+      <div class="countdown-label" id="countdownLabel">准备出发</div>
+      <div class="countdown-number" id="countdownNumber">3</div>
+      <div class="countdown-mode" id="countdownMode">语文小森林</div>
+      <div class="countdown-tip">手指放在键盘上，深呼吸～</div>
+    </div>
+  </div>
+
+  <div class="modal" id="resetModal" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="resetTitle" aria-describedby="resetDesc">
+      <div class="modal-icon" aria-hidden="true">🧹</div>
+      <h2 id="resetTitle">要清空所有进度吗？</h2>
+      <p id="resetDesc">收集的星星、词语记录和成长等级都会消失，而且不能撤销哦。</p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" type="button" id="resetCancel">先不清空</button>
+        <button class="btn btn-coral" type="button" id="resetConfirm">确定清空</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-layer" id="toastLayer" aria-live="polite"></div>
+  <div class="spark-layer" id="sparkLayer" aria-hidden="true"></div>
+  <div class="confetti-layer" id="confettiLayer" aria-hidden="true"></div>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
